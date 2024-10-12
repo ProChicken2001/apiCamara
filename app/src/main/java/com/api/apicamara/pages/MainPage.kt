@@ -1,6 +1,10 @@
 package com.api.apicamara.pages
 
+import android.Manifest
 import android.graphics.drawable.Icon
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,9 +22,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +44,44 @@ import com.api.apicamara.ui.theme.ApiCamaraTheme
 fun MainPage(
     navController: NavHostController
 ){
+    val context = LocalContext.current
+    var permission by remember { mutableStateOf(false) }
+
+    val requestPermissionsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+        permissions -> permissions.entries.forEach { entry ->
+            when(entry.key) {
+                Manifest.permission.READ_MEDIA_IMAGES -> {
+                    if(entry.value){
+                        permission = true
+                    }else{
+                        permission = false
+
+                        Toast.makeText(
+                            context,
+                            "Permiso denegado: no se puede tomar fotos",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+                Manifest.permission.READ_MEDIA_VIDEO -> {
+                    if(entry.value){
+                        permission = true
+                    }else{
+                        permission = false
+
+                        Toast.makeText(
+                            context,
+                            "Permiso denegado: no se puede grabar",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+        }
+    }
+
     Scaffold(
         topBar = { MainTopBar() }
     ) {
@@ -52,21 +99,30 @@ fun MainPage(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ElevatedButton(
-                modifier = Modifier.fillMaxWidth(0.75f),
-                onClick = {
-
-                },
-                colors = ButtonDefaults.elevatedButtonColors(
-                    contentColor = Color.Black,
-                    containerColor = colorResource(R.color.btnAccesoCamara)
-                )
-            ) {
-                Text(
-                    text ="Acceso a la camara",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.W500
-                )
+            if(permission){
+                Text("Permisos otorgados")
+            }else{
+                ElevatedButton(
+                    modifier = Modifier.fillMaxWidth(0.75f),
+                    onClick = {
+                        requestPermissionsLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.READ_MEDIA_IMAGES,
+                                Manifest.permission.READ_MEDIA_VIDEO
+                            )
+                        )
+                    },
+                    colors = ButtonDefaults.elevatedButtonColors(
+                        contentColor = Color.Black,
+                        containerColor = colorResource(R.color.btnAccesoCamara)
+                    )
+                ) {
+                    Text(
+                        text ="Acceso a la camara",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.W500
+                    )
+                }
             }
         }
 
