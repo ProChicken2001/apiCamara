@@ -58,27 +58,7 @@ fun MainPage(
     navController: NavHostController
 ){
     val context = LocalContext.current
-    var mediaUri by remember { mutableStateOf<Uri?>(null) }
     var permission by remember { mutableStateOf(false) }
-
-    val launcherIntent = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-            result ->
-        if(result.resultCode == Activity.RESULT_OK){
-            result.data?.data?.let { uri ->
-                mediaUri = uri
-                Toast
-                    .makeText(context, "Archivo cargado con exito", Toast.LENGTH_LONG)
-                    .show()
-            }
-        }else{
-            Toast
-                .makeText(context, "No se pudo cargar el archivo", Toast.LENGTH_LONG)
-                .show()
-        }
-
-    }
 
     val requestPermissionsLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
