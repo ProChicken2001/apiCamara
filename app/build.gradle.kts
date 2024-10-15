@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera)
     implementation(libs.androidx.camera.lifecycle)
@@ -66,8 +67,6 @@ dependencies {
     implementation(libs.androidx.camera.video)
     implementation(libs.androidx.camera.extensions)
     implementation(libs.coil)
-
-
     implementation(libs.androidx.navigation)
 
     testImplementation(libs.junit)

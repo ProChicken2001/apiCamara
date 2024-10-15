@@ -64,8 +64,9 @@ fun MainPage(
         ActivityResultContracts.RequestMultiplePermissions()
     ) {
         permissions ->
-        permission = permissions[Manifest.permission.READ_MEDIA_IMAGES] == true ||
-                permissions[Manifest.permission.READ_MEDIA_VIDEO] == true
+        permission = permissions[Manifest.permission.READ_MEDIA_IMAGES] == true &&
+                permissions[Manifest.permission.READ_MEDIA_VIDEO] == true &&
+                permissions[Manifest.permission.CAMERA] == true
 
         if(!permission){
             Toast.makeText(
@@ -84,7 +85,7 @@ fun MainPage(
             onFailed = {
                 Toast.makeText(
                     context,
-                    "Se necesita permisos para la camara",
+                    "Se necesita que el usuario acepte los permisos",
                     Toast.LENGTH_LONG)
                     .show()
             }
@@ -117,7 +118,8 @@ fun MainPage(
                     requestPermissionsLauncher.launch(
                         arrayOf(
                             Manifest.permission.READ_MEDIA_IMAGES,
-                            Manifest.permission.READ_MEDIA_VIDEO
+                            Manifest.permission.READ_MEDIA_VIDEO,
+                            Manifest.permission.CAMERA
                         )
                     )
                 }
@@ -231,9 +233,12 @@ fun VerifyPermissions(context: Context, onSuccess: () -> Unit, onFailed: () -> U
     if(ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
-        && ContextCompat.checkSelfPermission(
+        || ContextCompat.checkSelfPermission(
             context,
-            Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED){
+            Manifest.permission.READ_MEDIA_VIDEO) != PackageManager.PERMISSION_GRANTED
+        || ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
         onFailed()
     }else{
         onSuccess()
